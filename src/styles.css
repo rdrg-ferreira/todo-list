@@ -28,6 +28,7 @@ html, body {
 
 body {
     background: radial-gradient(circle,rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 42%, rgba(237, 221, 83, 1) 100%);
+    min-height: 500px;
 }
 
 #glass-border {
@@ -35,7 +36,6 @@ body {
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(4.4px);
-    -webkit-backdrop-filter: blur(4.4px);
     border: 1px solid rgba(255, 255, 255, 0.35);
     height: 60%;
     width: 70%;
@@ -48,7 +48,6 @@ body {
     height: calc(100% - 8px);
     width: calc(100% - 8px);
     padding: 16px;
-    min-height: calc(100% - 8px);
 }
 
 #menu > header {
