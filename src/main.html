@@ -9,17 +9,23 @@
     <div id="glass-border" class="flex items-center">
         <div id="menu" class="flex flex-column align-center">
             <header class="flex align-center">
-                <button id="home" class="flex align-center active">
+                <button id="home" class="tab flex align-center active">
                     <img src="./assets/view_cozy_24dp_000000_FILL0_wght400_GRAD0_opsz24.png" alt="home button">
                     Home
                 </button>
-                <button id="schedule" class="flex align-center">
-                    <img src="./assets/calendar_month_24dp_000000_FILL0_wght400_GRAD0_opsz24.png" alt="schedule button">
-                    Schedule
+                <button id="projects" class="tab flex align-center">
+                    <img src="./assets/assignment_24dp_000000_FILL0_wght400_GRAD0_opsz24.png" alt="projects button">
+                    Projects
                 </button>
                 <div id="separator"></div>
-                <button id="open-project" class="flex items-center">+</button>
             </header>
+            <main>
+                <div id="home-tab" class="tab-panel active">
+                    <h2>Todos</h2>
+                    <div id="todo-container" class="grid"></div>
+                </div>
+                <div id="projects-tab" class="tab-panel"></div>
+            </main>
         </div>
     </div>
 </body>

@@ -1,4 +1,5 @@
 import "./styles.css";
+import { updateHomeTab, updateProjectsTab } from "./modules";
 
 function createApp() {
     const todoController = (function () {
@@ -15,17 +16,12 @@ function createApp() {
             const getPrio = () => priority;
             const setPrio = (newPriority) => priority = newPriority;
 
-            let assignedProject;
-            const getProject = () => assignedProject;
-            const setProject = (newProject) => assignedProject = newProject; 
-
             const markAsDone = () => {
 
             };
             
             return {getTitle, setTitle, getDesc, setDesc, 
-                getDueDate, setDueDate, getPrio, setPrio, 
-                getProject, setProject, markAsDone};
+                getDueDate, setDueDate, getPrio, setPrio, markAsDone};
         }
 
         const todosList = [];
@@ -69,12 +65,29 @@ function createApp() {
 
 const screenController = (function () {
     const app = createApp();
+    const buttons = document.querySelectorAll("button");
+    const tabs = document.querySelectorAll(".tab-panel");
 
     // event listeners
+    buttons.forEach(b => b.addEventListener("click", () => {
+        buttons.forEach(btn => btn.classList.remove("active"));
+        tabs.forEach(tab => tab.classList.remove("active"));
+        
+        b.classList.add("active");
+        document.querySelector(`${b.id}-tab`).classList.add("active");
+    }));
 
-    // add default project and todos
+    // add default project
     const defaultProject = app.createProject("Summer Trip");
     defaultProject.addTodos(app.createTodo("Passport", undefined, undefined, "High"));
     defaultProject.addTodos(app.createTodo("Bag", undefined, undefined, "Medium"));
     defaultProject.addTodos(app.createTodo("Tickets", "Look in this website ...", undefined, "High"));
+
+    app.addProject(defaultProject);
+
+    // create default todo
+    const defaultTodo = app.createTodo("Exercise", "30m", "24/10/2025", "High");
+    app.addTodo(defaultTodo);
+
+    updateHomeTab(defaultTodo);
 })();
