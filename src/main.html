@@ -21,10 +21,19 @@
             </header>
             <main>
                 <div id="home-tab" class="tab-panel active">
-                    <h2>Todos</h2>
+                    <div class="tab-header flex align-center">
+                        <h2>Todos</h2>
+                        <button id="create-todo" class="flex items-center">Create todo</button>
+                    </div>
                     <div id="todo-container" class="grid"></div>
                 </div>
-                <div id="projects-tab" class="tab-panel"></div>
+                <div id="projects-tab" class="tab-panel">
+                    <div class="tab-header flex align-center">
+                        <h2>Projects</h2>
+                        <button id="create-project" class="flex items-center">Create project</button>
+                    </div>
+                    <div id="projects-container" class="grid"></div>
+                </div>
             </main>
         </div>
     </div>

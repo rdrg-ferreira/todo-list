@@ -4,30 +4,34 @@ export function updateHomeTab(todoData) {
     // add new data
     const newTodo = document.createElement("div");
     newTodo.classList.add("flex", "align-center", "todo");
+    newTodo.setAttribute("data-priority", todoData.getPrio());
+    newTodo.setAttribute("data-id", todoData.getId());
 
     // handle title
     const title = document.createElement("span");
     title.textContent = todoData.getTitle();
     newTodo.appendChild(title);
 
-    // handle description
-    const desc = document.createElement("span");
-    desc.textContent = todoData.getDesc();
-    newTodo.appendChild(desc);
-
     // handle due date
     const dueDate = document.createElement("span");
     dueDate.textContent = todoData.getDueDate();
     newTodo.appendChild(dueDate);
 
-    // handle priority
-    const prio = document.createElement("span");
-    prio.textContent = todoData.getPrio();
-    newTodo.appendChild(prio);
-
     panel.appendChild(newTodo);
 }
 
-export function updateProjectsTab(projectList) {
-    const panel = document.querySelector("#projects-tab");
+export function updateProjectsTab(projectData) {
+    const panel = document.querySelector("#projects-container");
+
+    // add new project
+    const newProject = document.createElement("div");
+    newProject.classList.add("flex", "items-center", "project");
+    newProject.setAttribute("data-id", projectData.getId());
+
+    // handle title
+    const title = document.createElement("span");
+    title.textContent = projectData.getTitle();
+    newProject.appendChild(title);
+
+    panel.appendChild(newProject);
 }

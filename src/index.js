@@ -3,7 +3,7 @@ import { updateHomeTab, updateProjectsTab } from "./modules";
 
 function createApp() {
     const todoController = (function () {
-        const createTodo = (title, description="", dueDate="", priority="") => {
+        const createTodo = (title, description="", dueDate="", priority) => {
             const getTitle = () => title;
             const setTitle = (newTitle) => title = newTitle;
 
@@ -16,12 +16,11 @@ function createApp() {
             const getPrio = () => priority;
             const setPrio = (newPriority) => priority = newPriority;
 
-            const markAsDone = () => {
-
-            };
+            const id = crypto.randomUUID();
+            const getId = () => id;
             
             return {getTitle, setTitle, getDesc, setDesc, 
-                getDueDate, setDueDate, getPrio, setPrio, markAsDone};
+                getDueDate, setDueDate, getPrio, setPrio, getId};
         }
 
         const todosList = [];
@@ -43,7 +42,10 @@ function createApp() {
             const getTodos = () => todos;
             const addTodos = (todo) => todos.push(todo);
 
-            return {getTitle, setTitle, getDesc, setDesc, getTodos, addTodos}
+            const id = crypto.randomUUID();
+            const getId = () => id;
+
+            return {getTitle, setTitle, getDesc, setDesc, getTodos, addTodos, getId}
         };
 
         const projectList = [];
@@ -74,20 +76,20 @@ const screenController = (function () {
         tabs.forEach(tab => tab.classList.remove("active"));
         
         b.classList.add("active");
-        document.querySelector(`${b.id}-tab`).classList.add("active");
+        document.querySelector(`#${b.id}-tab`).classList.add("active");
     }));
 
-    // add default project
+    // create default project
     const defaultProject = app.createProject("Summer Trip");
     defaultProject.addTodos(app.createTodo("Passport", undefined, undefined, "High"));
     defaultProject.addTodos(app.createTodo("Bag", undefined, undefined, "Medium"));
     defaultProject.addTodos(app.createTodo("Tickets", "Look in this website ...", undefined, "High"));
 
     app.addProject(defaultProject);
+    updateProjectsTab(defaultProject);
 
     // create default todo
     const defaultTodo = app.createTodo("Exercise", "30m", "24/10/2025", "High");
     app.addTodo(defaultTodo);
-
     updateHomeTab(defaultTodo);
 })();
