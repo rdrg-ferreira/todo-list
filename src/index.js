@@ -67,17 +67,45 @@ function createApp() {
 
 const screenController = (function () {
     const app = createApp();
-    const buttons = document.querySelectorAll("button");
+    const tabButtons = document.querySelectorAll("button.tab");
     const tabs = document.querySelectorAll(".tab-panel");
+    const createTodoForm = document.querySelector("#create-todo-form");
+    const createProjectForm = document.querySelector("#create-project-form");
 
     // event listeners
-    buttons.forEach(b => b.addEventListener("click", () => {
-        buttons.forEach(btn => btn.classList.remove("active"));
+    tabButtons.forEach(b => b.addEventListener("click", () => {
+        tabButtons.forEach(btn => btn.classList.remove("active"));
         tabs.forEach(tab => tab.classList.remove("active"));
         
         b.classList.add("active");
         document.querySelector(`#${b.id}-tab`).classList.add("active");
     }));
+
+    createTodoForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        // get form data
+        const data = Object.fromEntries(new FormData(createTodoForm).entries());
+        Object.keys(data).forEach(key => {if (data[key] === "") data[key] = undefined});
+
+        const newTodo = app.createTodo(data["title"], data["desc"], data["data"], data["prio"]);
+        updateHomeTab(newTodo);
+
+        document.querySelector("#home").click();
+    });
+
+    createProjectForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        // get form data
+        const data = Object.fromEntries(new FormData(createProjectForm).entries());
+        Object.keys(data).forEach(key => {if (data[key] === "") data[key] = undefined});
+
+        const newProject = app.createProject(data["title"], data["desc"]);
+        updateProjectsTab(newProject);
+
+        document.querySelector("#projects").click();
+    });
 
     // create default project
     const defaultProject = app.createProject("Summer Trip");
