@@ -88,7 +88,11 @@ const screenController = (function () {
         const data = Object.fromEntries(new FormData(createTodoForm).entries());
         Object.keys(data).forEach(key => {if (data[key] === "") data[key] = undefined});
 
-        const newTodo = app.createTodo(data["title"], data["desc"], data["data"], data["prio"]);
+        // change date format to DD/MM/YYYY
+        data["date"] = data["date"].split("-").reverse().join("/");
+
+        const newTodo = app.createTodo(data["title"], data["desc"], data["date"], data["prio"]);
+        app.addTodo(newTodo);
         updateHomeTab(newTodo);
 
         document.querySelector("#home").click();
@@ -102,6 +106,7 @@ const screenController = (function () {
         Object.keys(data).forEach(key => {if (data[key] === "") data[key] = undefined});
 
         const newProject = app.createProject(data["title"], data["desc"]);
+        app.addProject(newProject);
         updateProjectsTab(newProject);
 
         document.querySelector("#projects").click();
