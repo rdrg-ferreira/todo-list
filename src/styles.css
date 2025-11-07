@@ -118,7 +118,7 @@ main {
     width: 110px;
 }
 
-.tab-panel > .container {
+.tab-panel > .container, form {
     overflow-y: auto;
     margin-top: 12px;
 }
@@ -168,4 +168,39 @@ main {
 
 .project {
     background-color: rgb(240, 240, 240);
+}
+
+form {
+    gap: 12px;
+    width: fit-content;
+}
+
+.required-input::after {
+    content: " *";
+    color: red;
+}
+
+input[type="text"] {
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+input[type="text"]:focus-visible {
+    outline: none;
+}
+
+fieldset {
+    border: none;
+}
+
+fieldset > legend {
+    margin-bottom: 4px;
+}
+
+fieldset > div.flex {
+    gap: 12px;
+}
+
+form > button[type="submit"] {
+    margin-top: 24px;
 }
