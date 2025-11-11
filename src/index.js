@@ -129,7 +129,7 @@ const screenController = (function () {
         Object.keys(data).forEach(key => {if (data[key] === "") data[key] = undefined});
 
         // change date format to DD/MM/YYYY
-        data["date"] = data["date"].split("-").reverse().join("/");
+        if (data["date"]) data["date"] = data["date"].split("-").reverse().join("/");
 
         const newTodo = app.createTodo(data["title"], data["desc"], data["date"], data["prio"]);
         app.addTodo(newTodo);
