@@ -110,6 +110,11 @@ main {
     flex-direction: column;
 }
 
+.tab-panel.active.closable {
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .tab-panel > .tab-header {
     justify-content: space-between;
 }
@@ -203,4 +208,10 @@ fieldset > div.flex {
 
 form > button[type="submit"] {
     margin-top: 24px;
+}
+
+.tab-panel > button.close-button {
+    width: max-content;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
 }

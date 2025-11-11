@@ -9,11 +9,11 @@
     <div id="glass-border" class="flex items-center">
         <div id="menu" class="flex flex-column align-center">
             <header class="flex align-center">
-                <button id="home" class="tab flex align-center active">
+                <button id="home-tab-button" class="tab flex align-center active">
                     <img src="./assets/view_cozy_24dp_000000_FILL0_wght400_GRAD0_opsz24.png" alt="home button">
                     Home
                 </button>
-                <button id="projects" class="tab flex align-center">
+                <button id="projects-tab-button" class="tab flex align-center">
                     <img src="./assets/assignment_24dp_000000_FILL0_wght400_GRAD0_opsz24.png" alt="projects button">
                     Projects
                 </button>
@@ -23,66 +23,71 @@
                 <div id="home-tab" class="tab-panel active">
                     <div class="tab-header flex align-center">
                         <h2>Todos</h2>
-                        <button id="create-todo" class="tab flex items-center">Create todo</button>
+                        <button id="create-todo" class="flex items-center">Create todo</button>
                     </div>
                     <div id="todo-container" class="container grid"></div>
                 </div>
                 <div id="projects-tab" class="tab-panel">
                     <div class="tab-header flex align-center">
                         <h2>Projects</h2>
-                        <button id="create-project" class="tab flex items-center">Create project</button>
+                        <button id="create-project" class="flex items-center">Create project</button>
                     </div>
                     <div id="projects-container" class="container grid"></div>
                 </div>
-                <div id="create-todo-tab" class="tab-panel">
-                    <h2>Create todo</h2>
-                    <form action="" method="get" id="create-todo-form" class="flex flex-column">
-                        <div class="input">
-                            <label for="get-todo-title" class="required-input">Title:</label>
-                            <input type="text" id="get-todo-title" required name="title" min="1">
-                        </div>
-                        <div class="input">
-                            <label for="get-todo-desc">Description:</label>
-                            <input type="text" id="get-todo-desc" name="desc">
-                        </div>
-                        <div class="input">
-                            <label for="get-todo-date">Due date:</label>
-                            <input type="date" id="get-todo-date" name="date">
-                        </div>
-                        <fieldset class="input flex">
-                            <legend class="required-input">Priority</legend>
-
-                            <div class="flex">
-                                <div class="wrapper">
-                                    <label for="get-todo-prio-low">Low</label>
-                                    <input type="radio" id="get-todo-prio-low" required name="prio" value="Low">
-                                </div>
-                                <div class="wrapper">
-                                    <label for="get-todo-prio-mid">Medium</label>
-                                    <input type="radio" id="get-todo-prio-mid" name="prio" value="Medium">
-                                </div>
-                                <div class="wrapper">
-                                    <label for="get-todo-prio-high">High</label>
-                                    <input type="radio" id="get-todo-prio-high" name="prio" value="High">
-                                </div>
+                <div id="create-todo-tab" class="tab-panel closable">
+                    <div class="content flex flex-column">
+                        <h2>Create todo</h2>
+                        <form action="" method="get" id="create-todo-form" class="flex flex-column">
+                            <div class="input">
+                                <label for="get-todo-title" class="required-input">Title:</label>
+                                <input type="text" id="get-todo-title" required name="title" min="1">
                             </div>
-                        </fieldset>
-                        <button type="submit" formmethod="get">Create</button>
-                    </form>
+                            <div class="input">
+                                <label for="get-todo-desc">Description:</label>
+                                <input type="text" id="get-todo-desc" name="desc">
+                            </div>
+                            <div class="input">
+                                <label for="get-todo-date">Due date:</label>
+                                <input type="date" id="get-todo-date" name="date">
+                            </div>
+                            <fieldset class="input flex">
+                                <legend class="required-input">Priority</legend>
+                                <div class="flex">
+                                    <div class="wrapper">
+                                        <label for="get-todo-prio-low">Low</label>
+                                        <input type="radio" id="get-todo-prio-low" required name="prio" value="Low">
+                                    </div>
+                                    <div class="wrapper">
+                                        <label for="get-todo-prio-mid">Medium</label>
+                                        <input type="radio" id="get-todo-prio-mid" name="prio" value="Medium">
+                                    </div>
+                                    <div class="wrapper">
+                                        <label for="get-todo-prio-high">High</label>
+                                        <input type="radio" id="get-todo-prio-high" name="prio" value="High">
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <button type="submit" formmethod="get">Create</button>
+                        </form>
+                    </div>
+                    <button class="close-button flex items-center">x</button>
                 </div>
-                <div id="create-project-tab" class="tab-panel">
-                    <h2>Create project</h2>
-                    <form action="" method="get" id="create-project-form" class="flex flex-column">
-                        <div class="input">
-                            <label for="get-project-title" class="required-input">Title:</label>
-                            <input type="text" id="get-project-title" required name="title" min="1">
-                        </div>
-                        <div class="input">
-                            <label for="get-project-desc">Description:</label>
-                            <input type="text" id="get-project-desc" name="desc">
-                        </div>
-                        <button type="submit" formmethod="get">Create</button>
-                    </form>
+                <div id="create-project-tab" class="tab-panel closable">
+                    <div class="content flex flex-column">
+                        <h2>Create project</h2>
+                        <form action="" method="get" id="create-project-form" class="flex flex-column">
+                            <div class="input">
+                                <label for="get-project-title" class="required-input">Title:</label>
+                                <input type="text" id="get-project-title" required name="title" min="1">
+                            </div>
+                            <div class="input">
+                                <label for="get-project-desc">Description:</label>
+                                <input type="text" id="get-project-desc" name="desc">
+                            </div>
+                            <button type="submit" formmethod="get">Create</button>
+                        </form>
+                    </div>
+                    <button class="close-button flex items-center">x</button>
                 </div>
             </main>
         </div>

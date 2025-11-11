@@ -67,19 +67,59 @@ function createApp() {
 
 const screenController = (function () {
     const app = createApp();
-    const tabButtons = document.querySelectorAll("button.tab");
-    const tabs = document.querySelectorAll(".tab-panel");
+    const homeButton = document.querySelector("#home-tab-button");
+    const projectsButton = document.querySelector("#projects-tab-button");
+    const createTodoButton = document.querySelector("#create-todo");
+    const createProjectButton = document.querySelector("#create-project");
     const createTodoForm = document.querySelector("#create-todo-form");
     const createProjectForm = document.querySelector("#create-project-form");
+    const closeButtons = document.querySelectorAll("button.close-button");
 
-    // event listeners
-    tabButtons.forEach(b => b.addEventListener("click", () => {
+    function handleTabButtonClick(b) {
+        const tabButtons = document.querySelectorAll("button.tab");
+        const tabs = document.querySelectorAll(".tab-panel");
+
         tabButtons.forEach(btn => btn.classList.remove("active"));
         tabs.forEach(tab => tab.classList.remove("active"));
         
         b.classList.add("active");
-        document.querySelector(`#${b.id}-tab`).classList.add("active");
-    }));
+        const tab = document.querySelector(`#${b.id.split("-tab-button")[0]}-tab`);
+        tab.classList.add("active");
+    }
+
+    // event listeners
+    homeButton.addEventListener("click", () => handleTabButtonClick(homeButton));
+    projectsButton.addEventListener("click", () => handleTabButtonClick(projectsButton));
+
+    createTodoButton.addEventListener("click", () => {
+        createTodoButton.disabled = true;
+
+        const header = document.querySelector("#menu > header");
+
+        const newButton = document.createElement("button");
+        newButton.id = "create-todo-tab-button";
+        newButton.classList.add("tab", "flex", "items-center");
+        newButton.textContent = "Create todo";
+        newButton.addEventListener("click", (e) => handleTabButtonClick(e.target));
+
+        header.appendChild(newButton);
+        newButton.click();
+    });
+
+    createProjectButton.addEventListener("click", () => {
+        createProjectButton.disabled = true;
+
+        const header = document.querySelector("#menu > header");
+
+        const newButton = document.createElement("button");
+        newButton.id = "create-project-tab-button";
+        newButton.classList.add("tab", "flex", "align-center");
+        newButton.textContent = "Create project";
+        newButton.addEventListener("click", (e) => handleTabButtonClick(e.target));
+
+        header.appendChild(newButton);
+        newButton.click();
+    });
 
     createTodoForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -95,7 +135,11 @@ const screenController = (function () {
         app.addTodo(newTodo);
         updateHomeTab(newTodo);
 
-        document.querySelector("#home").click();
+        document.querySelector("#home-tab-button").click();
+
+        // delete tab button and enable form button again
+        document.querySelector("#create-todo-tab-button").remove();
+        createTodoButton.disabled = false;
     });
 
     createProjectForm.addEventListener("submit", (e) => {
@@ -109,8 +153,21 @@ const screenController = (function () {
         app.addProject(newProject);
         updateProjectsTab(newProject);
 
-        document.querySelector("#projects").click();
+        document.querySelector("#projects-tab-button").click();
+        
+        // delete tab button and enable form button again
+        document.querySelector("#create-project-tab-button").remove();
+        createProjectButton.disabled = false;
     });
+
+    closeButtons.forEach((b) => b.addEventListener("click", () => {
+        const parentId = b.parentElement.id;
+
+        document.querySelector(`#${parentId}-button`).remove();
+        document.querySelector(`#${parentId.split("-tab")[0]}`).disabled = false;
+
+        homeButton.click();
+    }));
 
     // create default project
     const defaultProject = app.createProject("Summer Trip");
