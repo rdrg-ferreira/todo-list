@@ -10,9 +10,10 @@ export function updateHomeTab(todoData, app, handleTabButtonClick, homeButton) {
     // add check button
     const checkButton = document.createElement("div");
     checkButton.classList.add("check-button");
-    checkButton.addEventListener("click", () => {
+    checkButton.addEventListener("click", (e) => {
+        e.stopPropagation();
         const todoId = checkButton.parentElement.dataset.id;
-        const tabButton = document.querySelector(`header > #${todoId}-tab-button`);
+        const tabButton = document.querySelector(`header > #${CSS.escape(todoId)}-tab-button`);
         
         if (tabButton) tabButton.remove();
         app.removeTodo(todoId)
@@ -86,7 +87,7 @@ export function updateProjectsTab(projectData, app, handleTabButtonClick) {
     checkButton.classList.add("check-button");
     checkButton.addEventListener("click", () => {
         const projectId = checkButton.parentElement.dataset.id;
-        const tabButton = document.querySelector(`header > #${projectId}-tab-button`);
+        const tabButton = document.querySelector(`header > #${CSS.escape(projectId)}-tab-button`);
         
         if (tabButton) tabButton.remove();
         app.removeProject(projectId)
