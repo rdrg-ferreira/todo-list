@@ -92,5 +92,20 @@
             </main>
         </div>
     </div>
+
+    <!-- template for tab-panel to display todo-info-->
+    <template id="todo-info-display">
+        <div class="tab-panel closable">
+            <div class="flex flex-column">
+                <h2></h2>
+                <div class="content flex flex-column">
+                    <span class="flex"><strong>Description: </strong><span class="desc"></span></span>
+                    <span class="flex"><strong>Due data: </strong><span class="date"></span></span>
+                    <span class="flex"><strong>Priority: </strong><span class="prio"></span></span>
+                </div>
+            </div>
+            <button class="close-button flex items-center">x</button>
+        </div>
+    </template>
 </body>
 </html>

@@ -233,3 +233,12 @@ form > button[type="submit"] {
     height: 15%;
     border-radius: 50%;
 }
+
+.tab-panel .content {
+    margin-top: 12px;
+    gap: 4px;
+}
+
+.tab-panel span.flex {
+    gap: 4px;
+}

@@ -87,7 +87,7 @@ const screenController = (function () {
         tabs.forEach(tab => tab.classList.remove("active"));
         
         b.classList.add("active");
-        const tab = document.querySelector(`#${b.id.split("-tab-button")[0]}-tab`);
+        const tab = document.querySelector(`#${CSS.escape(b.id.split("-tab-button")[0])}-tab`);
         tab.classList.add("active");
     }
 
@@ -117,7 +117,7 @@ const screenController = (function () {
 
         const newButton = document.createElement("button");
         newButton.id = "create-project-tab-button";
-        newButton.classList.add("tab", "flex", "align-center");
+        newButton.classList.add("tab", "flex", "items-center");
         newButton.textContent = "Create project";
         newButton.addEventListener("click", (e) => handleTabButtonClick(e.target));
 
@@ -137,7 +137,7 @@ const screenController = (function () {
 
         const newTodo = app.createTodo(data["title"], data["desc"], data["date"], data["prio"]);
         app.addTodo(newTodo);
-        updateHomeTab(newTodo, app);
+        updateHomeTab(newTodo, app, handleTabButtonClick, homeButton);
 
         document.querySelector("#home-tab-button").click();
 
@@ -155,7 +155,7 @@ const screenController = (function () {
 
         const newProject = app.createProject(data["title"], data["desc"]);
         app.addProject(newProject);
-        updateProjectsTab(newProject, app);
+        updateProjectsTab(newProject, app, handleTabButtonClick);
 
         document.querySelector("#projects-tab-button").click();
         
@@ -180,10 +180,10 @@ const screenController = (function () {
     defaultProject.addTodos(app.createTodo("Tickets", "Look in this website ...", undefined, "High"));
 
     app.addProject(defaultProject);
-    updateProjectsTab(defaultProject, app);
+    updateProjectsTab(defaultProject, app, handleTabButtonClick);
 
     // create default todo
     const defaultTodo = app.createTodo("Exercise", "30m", "24/10/2025", "High");
     app.addTodo(defaultTodo);
-    updateHomeTab(defaultTodo, app);
+    updateHomeTab(defaultTodo, app, handleTabButtonClick, homeButton);
 })();
