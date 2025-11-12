@@ -1,4 +1,4 @@
-export function updateHomeTab(todoData) {
+export function updateHomeTab(todoData, app) {
     const panel = document.querySelector("#todo-container");
 
     // add new data
@@ -7,9 +7,23 @@ export function updateHomeTab(todoData) {
     newTodo.setAttribute("data-priority", todoData.getPrio());
     newTodo.setAttribute("data-id", todoData.getId());
 
+    // add check button
+    const checkButton = document.createElement("div");
+    checkButton.classList.add("check-button");
+    checkButton.addEventListener("click", () => {
+        const todoId = checkButton.parentElement.dataset.id;
+        const tabButton = document.querySelector(`header > button[data-todo-id="${todoId}"]`);
+        
+        if (tabButton) tabButton.remove();
+        app.removeTodo(todoId)
+        checkButton.parentElement.remove();
+    });
+    newTodo.appendChild(checkButton);
+
     // handle title
     const title = document.createElement("span");
     title.textContent = todoData.getTitle();
+    title.style.flexGrow = 1;
     newTodo.appendChild(title);
 
     // handle due date
@@ -20,13 +34,26 @@ export function updateHomeTab(todoData) {
     panel.appendChild(newTodo);
 }
 
-export function updateProjectsTab(projectData) {
+export function updateProjectsTab(projectData, app) {
     const panel = document.querySelector("#projects-container");
 
     // add new project
     const newProject = document.createElement("div");
     newProject.classList.add("flex", "items-center", "project");
     newProject.setAttribute("data-id", projectData.getId());
+
+    // add check button
+    const checkButton = document.createElement("div");
+    checkButton.classList.add("check-button");
+    checkButton.addEventListener("click", () => {
+        const projectId = checkButton.parentElement.dataset.id;
+        const tabButton = document.querySelector(`header > button[data-project-id="${projectId}"]`);
+        
+        if (tabButton) tabButton.remove();
+        app.removeProject(projectId)
+        checkButton.parentElement.remove();
+    });
+    newProject.appendChild(checkButton);
 
     // handle title
     const title = document.createElement("span");

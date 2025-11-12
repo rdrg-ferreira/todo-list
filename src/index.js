@@ -26,8 +26,9 @@ function createApp() {
         const todosList = [];
         const getTodos = () => todosList;
         const addTodo = (newTodo) => todosList.push(newTodo);
+        const removeTodo = (todoId) => todosList.splice(todosList.findIndex(item => item.getId() === todoId), 1);
 
-        return {createTodo, getTodos, addTodo};
+        return {createTodo, getTodos, addTodo, removeTodo};
     })();
 
     const projectsController = (function () {
@@ -51,17 +52,20 @@ function createApp() {
         const projectList = [];
         const getProjects = () => projectList;
         const addProject = (newProject) => projectList.push(newProject);
+        const removeProject = (projectId) => projectList.splice(projectList.findIndex(item => item.getId() === projectId), 1);
 
-        return {createProject, getProjects, addProject};
+        return {createProject, getProjects, addProject, removeProject};
     })();
 
     return {
         createTodo: todoController.createTodo,
         getTodos: todoController.getTodos,
         addTodo: todoController.addTodo,
+        removeTodo: todoController.removeTodo,
         createProject: projectsController.createProject,
         getProjects: projectsController.getProjects,
-        addProject: projectsController.addProject
+        addProject: projectsController.addProject,
+        removeProject: projectsController.removeProject
     };
 }
 
@@ -133,7 +137,7 @@ const screenController = (function () {
 
         const newTodo = app.createTodo(data["title"], data["desc"], data["date"], data["prio"]);
         app.addTodo(newTodo);
-        updateHomeTab(newTodo);
+        updateHomeTab(newTodo, app);
 
         document.querySelector("#home-tab-button").click();
 
@@ -151,7 +155,7 @@ const screenController = (function () {
 
         const newProject = app.createProject(data["title"], data["desc"]);
         app.addProject(newProject);
-        updateProjectsTab(newProject);
+        updateProjectsTab(newProject, app);
 
         document.querySelector("#projects-tab-button").click();
         
@@ -176,10 +180,10 @@ const screenController = (function () {
     defaultProject.addTodos(app.createTodo("Tickets", "Look in this website ...", undefined, "High"));
 
     app.addProject(defaultProject);
-    updateProjectsTab(defaultProject);
+    updateProjectsTab(defaultProject, app);
 
     // create default todo
     const defaultTodo = app.createTodo("Exercise", "30m", "24/10/2025", "High");
     app.addTodo(defaultTodo);
-    updateHomeTab(defaultTodo);
+    updateHomeTab(defaultTodo, app);
 })();
