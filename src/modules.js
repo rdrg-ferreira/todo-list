@@ -24,7 +24,13 @@ export function updateTodos(todoData, app, handleTabButtonClick, homeButton, con
         if (todoData.getAssignedProject() !== "home") {
             app.getProjects().find(p => p.getId() === todoData.getAssignedProject()).removeTodo(todoId);
         }
+
+        // store change locally
+        app.removeLocalData(app.getTodos().find(t => t.getId() === todoId));
+        app.storeLocalData(app.getProjects().find(p => p.getId() === todoData.getAssignedProject()));
+
         app.removeTodo(todoId)
+
         checkButton.parentElement.remove();
     });
     newTodo.appendChild(checkButton);
@@ -111,8 +117,14 @@ export function updateProjectsTab(projectData, app, handleTabButtonClick, homeBu
                 tabButton.remove();
                 document.querySelector(`#${CSS.escape(todo.getId())}-tab`).remove();
             }
+            // store change locally
+            app.removeLocalData(app.getTodos().find(t => t.getId() === todo.getId()));
+
             app.removeTodo(todo.getId());
         });
+
+        // store change locally
+        app.removeLocalData(app.getProjects().find(p => p.getId() === projectId));
 
         app.removeProject(projectId)
         checkButton.parentElement.remove();

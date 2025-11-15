@@ -3,27 +3,21 @@ import { updateTodos, updateProjectsTab } from "./modules";
 
 function createApp() {
     const todoController = (function () {
-        const createTodo = (title, description="", dueDate="", priority, assignedProject) => {
+        const createTodo = (title, description="", dueDate="", priority, assignedProject, id="") => {
             const getTitle = () => title;
-            const setTitle = (newTitle) => title = newTitle;
 
             const getDesc = () => description;
-            const setDesc = (newDescription) => description = newDescription;
             
             const getDueDate = () => dueDate;
-            const setDueDate = (newDueDate) => dueDate = newDueDate;
             
             const getPrio = () => priority;
-            const setPrio = (newPriority) => priority = newPriority;
 
-            const id = crypto.randomUUID();
+            if (id === "") id = crypto.randomUUID();
             const getId = () => id;
 
             const getAssignedProject = () => assignedProject;
-            const setAssignedProject = (newProject) => assignedProject = newProject;
             
-            return {getTitle, setTitle, getDesc, setDesc, getDueDate, 
-                setDueDate, getPrio, setPrio, getId, getAssignedProject, setAssignedProject};
+            return {getTitle, getDesc, getDueDate, getPrio, getId, getAssignedProject};
         }
 
         const todosList = [];
@@ -35,22 +29,20 @@ function createApp() {
     })();
 
     const projectsController = (function () {
-        const createProject = (title, description="") => {
+        const createProject = (title, description="", id="") => {
             const getTitle = () => title;
-            const setTitle = (newTitle) => title = newTitle;
 
             const getDesc = () => description;
-            const setDesc = (newDescription) => description = newDescription;
 
             const todos = [];
             const getTodos = () => todos;
             const addTodos = (todo) => todos.push(todo);
             const removeTodo = (todoId) => todos.splice(todos.findIndex(item => item.getId() === todoId), 1);
 
-            const id = crypto.randomUUID();
+            if (id === "") id = crypto.randomUUID();
             const getId = () => id;
 
-            return {getTitle, setTitle, getDesc, setDesc, getTodos, addTodos, removeTodo, getId}
+            return {getTitle, getDesc, getTodos, addTodos, removeTodo, getId}
         };
 
         const projectList = [];
@@ -61,6 +53,69 @@ function createApp() {
         return {createProject, getProjects, addProject, removeProject};
     })();
 
+    const isStorageAvailable = (type="localStorage") => {
+        let storage;
+        try {
+            storage = window[type];
+            const x = "__storage_test__";
+            storage.setItem(x, x);
+            storage.removeItem(x);
+            return true;
+        } catch (e) {
+            return (
+            e instanceof DOMException &&
+            e.name === "QuotaExceededError" &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            storage &&
+            storage.length !== 0
+            );
+        }
+    }
+
+    const storeLocalData = (item) => {
+        if (!isStorageAvailable()) return;
+        
+        // determine what item is and store its info
+        const itemInfo = {"id": item.getId(), "title": item.getTitle(), "desc": item.getDesc()};
+        if (Object.hasOwn(item, "getTodos")) {
+            localStorage.setItem(`project:${item.getId()}`, JSON.stringify(itemInfo));
+        } else {
+            itemInfo["date"] = item.getDueDate();
+            itemInfo["prio"] = item.getPrio();
+            itemInfo["project"] = item.getAssignedProject();
+
+            localStorage.setItem(`todo:${item.getId()}`, JSON.stringify(itemInfo));
+        }
+    }
+
+    const removeLocalData = (item) => {
+        // determine what item is and remove its info
+        if (Object.hasOwn(item, "getTodos")) {
+            localStorage.removeItem(`project:${item.getId()}`);
+        } else {
+            localStorage.removeItem(`todo:${item.getId()}`);
+        }
+    }
+
+    const fetchLocalData = () => {
+        const todos = [];
+        const projects = [];
+
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+
+            if (key.startsWith("todo:")) {
+                const todoInfo = JSON.parse(localStorage.getItem(key));
+                todos.push(todoInfo);
+            } else if (key.startsWith("project:")) {
+                const project = JSON.parse(localStorage.getItem(key));
+                projects.push(project);
+            }
+        }
+
+        return [todos, projects];
+    }
+
     return {
         createTodo: todoController.createTodo,
         getTodos: todoController.getTodos,
@@ -69,7 +124,10 @@ function createApp() {
         createProject: projectsController.createProject,
         getProjects: projectsController.getProjects,
         addProject: projectsController.addProject,
-        removeProject: projectsController.removeProject
+        removeProject: projectsController.removeProject,
+        storeLocalData: storeLocalData,
+        removeLocalData: removeLocalData,
+        fetchLocalData: fetchLocalData
     };
 }
 
@@ -161,10 +219,18 @@ const screenController = (function () {
         const newTodo = app.createTodo(data["title"], data["desc"], data["date"], data["prio"], data["project"]);
         app.addTodo(newTodo);
 
+        // store change locally
+        app.storeLocalData(newTodo);
+
         // only update for now if the container is the home one
         if (data["project"] === "home") updateTodos(newTodo, app, handleTabButtonClick, homeButton, homeContainer);
         else {
-            app.getProjects().find(p => p.getId() === data["project"]).addTodos(newTodo);
+            const assignedProject = app.getProjects().find(p => p.getId() === data["project"]);
+            assignedProject.addTodos(newTodo);
+            
+            // store change locally
+            app.storeLocalData(assignedProject);
+
             document.querySelector(`#projects-container > .project[data-id="${CSS.escape(data["project"])}"`).click();
         }
 
@@ -184,6 +250,10 @@ const screenController = (function () {
 
         const newProject = app.createProject(data["title"], data["desc"]);
         app.addProject(newProject);
+
+        // store change locally
+        app.storeLocalData(newProject);
+
         updateProjectsTab(newProject, app, handleTabButtonClick, homeButton);
 
         // update select option of todo form
@@ -218,17 +288,20 @@ const screenController = (function () {
         homeButton.click();
     }));
 
-    // create default project
-    const defaultProject = app.createProject("Summer Trip", "Things to do to have a nice trip");
-    const defaultProTodo = app.createTodo("Passport", "Need to renovate", "24/10/2025", "High", defaultProject.getId());
-    defaultProject.addTodos(defaultProTodo);
+    // get local data and create it on the app
+    let [todos, projects] = app.fetchLocalData();
 
-    app.addProject(defaultProject);
-    app.addTodo(defaultProTodo);
-    updateProjectsTab(defaultProject, app, handleTabButtonClick, homeButton);
+    projects.forEach(projectInfo => {
+        const project = app.createProject(projectInfo["title"], projectInfo["desc"], projectInfo["id"]);
+        app.addProject(project);
+        updateProjectsTab(project, app, handleTabButtonClick, homeButton);
+    });
 
-    // create default todo
-    const defaultTodo = app.createTodo("Exercise", "30m", "24/10/2025", "High", "home");
-    app.addTodo(defaultTodo);
-    updateTodos(defaultTodo, app, handleTabButtonClick, homeButton, homeContainer);
+    todos.forEach(todoInfo => {
+        const todo = app.createTodo(todoInfo["title"], todoInfo["desc"], todoInfo["date"], todoInfo["prio"], todoInfo["project"], todoInfo["id"]);
+        app.addTodo(todo);
+
+        if (todo.getAssignedProject() === "home") updateTodos(todo, app, handleTabButtonClick, homeButton, homeContainer);
+        else app.getProjects().find(p => p.getId() === todo.getAssignedProject()).addTodos(todo);
+    });
 })();
