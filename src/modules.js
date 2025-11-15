@@ -1,5 +1,6 @@
-export function updateHomeTab(todoData, app, handleTabButtonClick, homeButton) {
-    const panel = document.querySelector("#todo-container");
+export function updateTodos(todoData, app, handleTabButtonClick, homeButton, containerElement) {
+
+    const panel = document.querySelector("#home-todo-container");
 
     // add new data
     const newTodo = document.createElement("div");
@@ -15,7 +16,14 @@ export function updateHomeTab(todoData, app, handleTabButtonClick, homeButton) {
         const todoId = checkButton.parentElement.dataset.id;
         const tabButton = document.querySelector(`header > #${CSS.escape(todoId)}-tab-button`);
         
-        if (tabButton) tabButton.remove();
+        if (tabButton) {
+            tabButton.remove();
+            document.querySelector(`#${CSS.escape(todoId)}-tab`).remove();
+        }
+
+        if (todoData.getAssignedProject() !== "home") {
+            app.getProjects().find(p => p.getId() === todoData.getAssignedProject()).removeTodo(todoId);
+        }
         app.removeTodo(todoId)
         checkButton.parentElement.remove();
     });
@@ -59,6 +67,7 @@ export function updateHomeTab(todoData, app, handleTabButtonClick, homeButton) {
 
             newPanel.querySelector(".close-button").addEventListener("click", () => {
                 document.querySelector(`#${CSS.escape(newPanel.id)}-button`).remove();
+                newPanel.remove();
                 homeButton.click();
             });
 
@@ -71,10 +80,10 @@ export function updateHomeTab(todoData, app, handleTabButtonClick, homeButton) {
         }
     });
 
-    panel.appendChild(newTodo);
+    containerElement.appendChild(newTodo);
 }
 
-export function updateProjectsTab(projectData, app, handleTabButtonClick) {
+export function updateProjectsTab(projectData, app, handleTabButtonClick, homeButton) {
     const panel = document.querySelector("#projects-container");
 
     // add new project
@@ -85,11 +94,26 @@ export function updateProjectsTab(projectData, app, handleTabButtonClick) {
     // add check button
     const checkButton = document.createElement("div");
     checkButton.classList.add("check-button");
-    checkButton.addEventListener("click", () => {
+    checkButton.addEventListener("click", (e) => {
+        e.stopPropagation();
         const projectId = checkButton.parentElement.dataset.id;
         const tabButton = document.querySelector(`header > #${CSS.escape(projectId)}-tab-button`);
         
-        if (tabButton) tabButton.remove();
+        if (tabButton) {
+            tabButton.remove();
+            document.querySelector(`#${CSS.escape(projectId)}-tab`).remove();
+        }
+
+        const pro = app.getProjects().find(p => p.getId() === projectData.getId());
+        pro.getTodos().forEach(todo => {
+            const tabButton = document.querySelector(`header > #${CSS.escape(todo.getId())}-tab-button`);
+            if (tabButton) {
+                tabButton.remove();
+                document.querySelector(`#${CSS.escape(todo.getId())}-tab`).remove();
+            }
+            app.removeTodo(todo.getId());
+        });
+
         app.removeProject(projectId)
         checkButton.parentElement.remove();
     });
@@ -99,6 +123,58 @@ export function updateProjectsTab(projectData, app, handleTabButtonClick) {
     const title = document.createElement("span");
     title.textContent = projectData.getTitle();
     newProject.appendChild(title);
+
+    newProject.addEventListener("click", () => {
+        // create new tab if it doesnt exist
+        const header = document.querySelector("#menu > header");
+        const existentTabButton = header.querySelector(`#${CSS.escape(projectData.getId())}-tab-button`);
+
+        if (!existentTabButton) {
+            const newButton = document.createElement("button");
+            newButton.id = `${projectData.getId()}-tab-button`;
+            newButton.classList.add("tab", "flex", "items-center");
+            newButton.textContent = projectData.getTitle();
+            newButton.addEventListener("click", (e) => handleTabButtonClick(e.target));
+
+            header.appendChild(newButton);
+
+            // since there was no tab button, there also isn't a tab-panel
+            // so we will also create one
+            const todoDisplayTemplate = document.querySelector("#project-info-display");
+            const clone = document.importNode(todoDisplayTemplate.content, true);
+            const newPanel = clone.querySelector(".tab-panel");
+            newPanel.id = `${projectData.getId()}-tab`;
+            newPanel.querySelector("h2").textContent = projectData.getTitle();
+            newPanel.querySelector("p").textContent = projectData.getDesc();
+            
+            // add project todos
+            const todoContainer = newPanel.querySelector(".todo-container");
+            const pro = app.getProjects().find(p => p.getId() === projectData.getId());
+            pro.getTodos().forEach(todo => {
+                updateTodos(todo, app, handleTabButtonClick, homeButton, todoContainer);
+            });
+
+            newPanel.querySelector(".close-button").addEventListener("click", () => {
+                document.querySelector(`#${CSS.escape(newPanel.id)}-button`).remove();
+                newPanel.remove();
+                homeButton.click();
+            });
+
+            const main = document.querySelector("main");
+            main.appendChild(newPanel);
+
+            newButton.click();
+        } else {
+            const todoContainer = document.querySelector(`#${CSS.escape(projectData.getId())}-tab > div > .todo-container`);
+            todoContainer.textContent = "";
+            const pro = app.getProjects().find(p => p.getId() === projectData.getId());
+            pro.getTodos().forEach(todo => {
+                updateTodos(todo, app, handleTabButtonClick, homeButton, todoContainer);
+            });
+
+            existentTabButton.click();
+        }
+    });
 
     panel.appendChild(newProject);
 }

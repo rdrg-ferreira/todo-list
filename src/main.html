@@ -25,7 +25,7 @@
                         <h2>Todos</h2>
                         <button id="create-todo" class="flex items-center">Create todo</button>
                     </div>
-                    <div id="todo-container" class="container grid"></div>
+                    <div id="home-todo-container" class="todo-container container grid"></div>
                 </div>
                 <div id="projects-tab" class="tab-panel">
                     <div class="tab-header flex align-center">
@@ -67,6 +67,12 @@
                                     </div>
                                 </div>
                             </fieldset>
+                            <div class="input">
+                                <label for="get-assigned-project">Assign a project:</label>
+                                <select name="project" id="get-assigned-project">
+                                    <option value="home">None (goes to Home tab)</option>
+                                </select>
+                            </div>
                             <button type="submit" formmethod="get">Create</button>
                         </form>
                     </div>
@@ -93,7 +99,7 @@
         </div>
     </div>
 
-    <!-- template for tab-panel to display todo-info-->
+    <!-- template for tab-panel to display todo info -->
     <template id="todo-info-display">
         <div class="tab-panel closable">
             <div class="flex flex-column">
@@ -105,6 +111,20 @@
                 </div>
             </div>
             <button class="close-button flex items-center">x</button>
+        </div>
+    </template>
+
+    <!-- template for tab-panel to display project info -->
+    <template id="project-info-display">
+        <div class="tab-panel closable">
+            <div class="flex flex-column" style="flex-grow: 1;">
+                <header class="flex space-between">
+                    <h2></h2>
+                    <button class="close-button flex items-center">x</button>
+                </header>
+                <p></p>
+                <div class="todo-container container grid"></div>
+            </div>
         </div>
     </template>
 </body>

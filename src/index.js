@@ -1,9 +1,9 @@
 import "./styles.css";
-import { updateHomeTab, updateProjectsTab } from "./modules";
+import { updateTodos, updateProjectsTab } from "./modules";
 
 function createApp() {
     const todoController = (function () {
-        const createTodo = (title, description="", dueDate="", priority) => {
+        const createTodo = (title, description="", dueDate="", priority, assignedProject) => {
             const getTitle = () => title;
             const setTitle = (newTitle) => title = newTitle;
 
@@ -18,9 +18,12 @@ function createApp() {
 
             const id = crypto.randomUUID();
             const getId = () => id;
+
+            const getAssignedProject = () => assignedProject;
+            const setAssignedProject = (newProject) => assignedProject = newProject;
             
-            return {getTitle, setTitle, getDesc, setDesc, 
-                getDueDate, setDueDate, getPrio, setPrio, getId};
+            return {getTitle, setTitle, getDesc, setDesc, getDueDate, 
+                setDueDate, getPrio, setPrio, getId, getAssignedProject, setAssignedProject};
         }
 
         const todosList = [];
@@ -42,11 +45,12 @@ function createApp() {
             const todos = [];
             const getTodos = () => todos;
             const addTodos = (todo) => todos.push(todo);
+            const removeTodo = (todoId) => todos.splice(todos.findIndex(item => item.getId() === todoId), 1);
 
             const id = crypto.randomUUID();
             const getId = () => id;
 
-            return {getTitle, setTitle, getDesc, setDesc, getTodos, addTodos, getId}
+            return {getTitle, setTitle, getDesc, setDesc, getTodos, addTodos, removeTodo, getId}
         };
 
         const projectList = [];
@@ -78,6 +82,7 @@ const screenController = (function () {
     const createTodoForm = document.querySelector("#create-todo-form");
     const createProjectForm = document.querySelector("#create-project-form");
     const closeButtons = document.querySelectorAll("button.close-button");
+    const homeContainer = document.querySelector("#home-todo-container");
 
     function handleTabButtonClick(b) {
         const tabButtons = document.querySelectorAll("button.tab");
@@ -97,6 +102,24 @@ const screenController = (function () {
 
     createTodoButton.addEventListener("click", () => {
         createTodoButton.disabled = true;
+
+        // update list of projects to choose from
+        const currentProjectsOnForm = document.querySelectorAll("#get-assigned-project > option");
+        const idsFromCurrentProjects = [];
+        currentProjectsOnForm.forEach(project => {
+            idsFromCurrentProjects.push(project.value);
+        });
+
+        app.getProjects().forEach(project => {
+            if (!idsFromCurrentProjects.includes(project.getId())) {
+                const newOption = document.createElement("option");
+                newOption.value = project.getId();
+                newOption.text = project.getTitle();
+
+                const selectProjectElement = document.querySelector("#get-assigned-project");
+                selectProjectElement.appendChild(newOption);
+            }
+        })
 
         const header = document.querySelector("#menu > header");
 
@@ -135,9 +158,15 @@ const screenController = (function () {
         // change date format to DD/MM/YYYY
         if (data["date"]) data["date"] = data["date"].split("-").reverse().join("/");
 
-        const newTodo = app.createTodo(data["title"], data["desc"], data["date"], data["prio"]);
+        const newTodo = app.createTodo(data["title"], data["desc"], data["date"], data["prio"], data["project"]);
         app.addTodo(newTodo);
-        updateHomeTab(newTodo, app, handleTabButtonClick, homeButton);
+
+        // only update for now if the container is the home one
+        if (data["project"] === "home") updateTodos(newTodo, app, handleTabButtonClick, homeButton, homeContainer);
+        else {
+            app.getProjects().find(p => p.getId() === data["project"]).addTodos(newTodo);
+            document.querySelector(`#projects-container > .project[data-id="${CSS.escape(data["project"])}"`).click();
+        }
 
         document.querySelector("#home-tab-button").click();
 
@@ -155,7 +184,23 @@ const screenController = (function () {
 
         const newProject = app.createProject(data["title"], data["desc"]);
         app.addProject(newProject);
-        updateProjectsTab(newProject, app, handleTabButtonClick);
+        updateProjectsTab(newProject, app, handleTabButtonClick, homeButton);
+
+        // update select option of todo form
+        const currentProjectsOnForm = document.querySelectorAll("#get-assigned-project > option");
+        const idsFromCurrentProjects = [];
+        currentProjectsOnForm.forEach(project => {
+            idsFromCurrentProjects.push(project.value);
+        });
+
+        if (!idsFromCurrentProjects.includes(newProject.getId())) {
+            const newOption = document.createElement("option");
+            newOption.value = newProject.getId();
+            newOption.text = newProject.getTitle();
+
+            const selectProjectElement = document.querySelector("#get-assigned-project");
+            selectProjectElement.appendChild(newOption);
+        }
 
         document.querySelector("#projects-tab-button").click();
         
@@ -174,16 +219,16 @@ const screenController = (function () {
     }));
 
     // create default project
-    const defaultProject = app.createProject("Summer Trip");
-    defaultProject.addTodos(app.createTodo("Passport", undefined, undefined, "High"));
-    defaultProject.addTodos(app.createTodo("Bag", undefined, undefined, "Medium"));
-    defaultProject.addTodos(app.createTodo("Tickets", "Look in this website ...", undefined, "High"));
+    const defaultProject = app.createProject("Summer Trip", "Things to do to have a nice trip");
+    const defaultProTodo = app.createTodo("Passport", "Need to renovate", "24/10/2025", "High", defaultProject.getId());
+    defaultProject.addTodos(defaultProTodo);
 
     app.addProject(defaultProject);
-    updateProjectsTab(defaultProject, app, handleTabButtonClick);
+    app.addTodo(defaultProTodo);
+    updateProjectsTab(defaultProject, app, handleTabButtonClick, homeButton);
 
     // create default todo
-    const defaultTodo = app.createTodo("Exercise", "30m", "24/10/2025", "High");
+    const defaultTodo = app.createTodo("Exercise", "30m", "24/10/2025", "High", "home");
     app.addTodo(defaultTodo);
-    updateHomeTab(defaultTodo, app, handleTabButtonClick, homeButton);
+    updateTodos(defaultTodo, app, handleTabButtonClick, homeButton, homeContainer);
 })();
