@@ -82,6 +82,7 @@ button {
 
 button.tab {
     gap: 4px;
+    overflow-x: hidden;
 }
 
 button.tab.active {

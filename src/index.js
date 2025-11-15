@@ -183,7 +183,7 @@ const screenController = (function () {
 
         const newButton = document.createElement("button");
         newButton.id = "create-todo-tab-button";
-        newButton.classList.add("tab", "flex", "items-center");
+        newButton.classList.add("tab", "flex", "align-center");
         newButton.textContent = "Create todo";
         newButton.addEventListener("click", (e) => handleTabButtonClick(e.target));
 
@@ -198,7 +198,7 @@ const screenController = (function () {
 
         const newButton = document.createElement("button");
         newButton.id = "create-project-tab-button";
-        newButton.classList.add("tab", "flex", "items-center");
+        newButton.classList.add("tab", "flex", "align-center");
         newButton.textContent = "Create project";
         newButton.addEventListener("click", (e) => handleTabButtonClick(e.target));
 

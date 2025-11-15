@@ -23,11 +23,13 @@ export function updateTodos(todoData, app, handleTabButtonClick, homeButton, con
 
         if (todoData.getAssignedProject() !== "home") {
             app.getProjects().find(p => p.getId() === todoData.getAssignedProject()).removeTodo(todoId);
+
+            // store change locally
+            app.storeLocalData(app.getProjects().find(p => p.getId() === todoData.getAssignedProject()));
         }
 
         // store change locally
         app.removeLocalData(app.getTodos().find(t => t.getId() === todoId));
-        app.storeLocalData(app.getProjects().find(p => p.getId() === todoData.getAssignedProject()));
 
         app.removeTodo(todoId)
 
@@ -54,7 +56,7 @@ export function updateTodos(todoData, app, handleTabButtonClick, homeButton, con
         if (!existentTabButton) {
             const newButton = document.createElement("button");
             newButton.id = `${todoData.getId()}-tab-button`;
-            newButton.classList.add("tab", "flex", "items-center");
+            newButton.classList.add("tab", "flex", "align-center");
             newButton.textContent = todoData.getTitle();
             newButton.addEventListener("click", (e) => handleTabButtonClick(e.target));
 
@@ -144,7 +146,7 @@ export function updateProjectsTab(projectData, app, handleTabButtonClick, homeBu
         if (!existentTabButton) {
             const newButton = document.createElement("button");
             newButton.id = `${projectData.getId()}-tab-button`;
-            newButton.classList.add("tab", "flex", "items-center");
+            newButton.classList.add("tab", "flex", "align-center");
             newButton.textContent = projectData.getTitle();
             newButton.addEventListener("click", (e) => handleTabButtonClick(e.target));
 

@@ -40,11 +40,11 @@
                         <form action="" method="get" id="create-todo-form" class="flex flex-column">
                             <div class="input">
                                 <label for="get-todo-title" class="required-input">Title:</label>
-                                <input type="text" id="get-todo-title" required name="title" min="1">
+                                <input type="text" id="get-todo-title" required name="title" minlength="1" maxlength="50">
                             </div>
                             <div class="input">
                                 <label for="get-todo-desc">Description:</label>
-                                <input type="text" id="get-todo-desc" name="desc">
+                                <input type="text" id="get-todo-desc" name="desc" maxlength="100">
                             </div>
                             <div class="input">
                                 <label for="get-todo-date">Due date:</label>
@@ -84,11 +84,11 @@
                         <form action="" method="get" id="create-project-form" class="flex flex-column">
                             <div class="input">
                                 <label for="get-project-title" class="required-input">Title:</label>
-                                <input type="text" id="get-project-title" required name="title" min="1">
+                                <input type="text" id="get-project-title" required name="title" minlength="1" maxlength="20">
                             </div>
                             <div class="input">
                                 <label for="get-project-desc">Description:</label>
-                                <input type="text" id="get-project-desc" name="desc">
+                                <input type="text" id="get-project-desc" name="desc" maxlength="100">
                             </div>
                             <button type="submit" formmethod="get">Create</button>
                         </form>
@@ -102,7 +102,7 @@
     <!-- template for tab-panel to display todo info -->
     <template id="todo-info-display">
         <div class="tab-panel closable">
-            <div class="flex flex-column">
+            <div class="flex flex-column" style="max-width: 100%;">
                 <h2></h2>
                 <div class="content flex flex-column">
                     <span class="flex"><strong>Description: </strong><span class="desc"></span></span>
